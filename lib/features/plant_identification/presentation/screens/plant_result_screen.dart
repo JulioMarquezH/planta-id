@@ -11,12 +11,47 @@ import '../widgets/error_view.dart';
 import '../widgets/loading_indicator.dart';
 import '../widgets/plant_info_card.dart';
 
-class PlantResultScreen extends ConsumerWidget {
+class PlantResultScreen extends ConsumerStatefulWidget {
   const PlantResultScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PlantResultScreen> createState() => _PlantResultScreenState();
+}
+
+class _PlantResultScreenState extends ConsumerState<PlantResultScreen> {
+  bool _snackBarShown = false;
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(plantIdentificationProvider);
+
+    // Mostrar SnackBar una sola vez cuando hay éxito
+    if (state is IdentificationSuccess && !_snackBarShown) {
+      _snackBarShown = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Row(
+                children: [
+                  Icon(Icons.check_circle, color: Colors.white),
+                  SizedBox(width: 8),
+                  Text('Guardado en Mis Plantas'),
+                ],
+              ),
+              backgroundColor: Colors.green.shade700,
+              duration: const Duration(seconds: 3),
+              behavior: SnackBarBehavior.floating,
+              action: SnackBarAction(
+                label: 'Ver',
+                textColor: Colors.white,
+                onPressed: () => context.go('/my-plants'),
+              ),
+            ),
+          );
+        }
+      });
+    }
 
     return Scaffold(
       body: switch (state) {
