@@ -114,7 +114,7 @@ class _DetailViewState extends ConsumerState<_DetailView> {
                   Positioned(
                     left: 16,
                     right: 16,
-                    bottom: 48,
+                    bottom: 16,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,

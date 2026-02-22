@@ -153,7 +153,7 @@ class _SuccessViewState extends State<_SuccessView> {
                 Positioned(
                   left: 16,
                   right: 16,
-                  bottom: 48,
+                  bottom: 16,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
