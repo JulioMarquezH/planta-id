@@ -101,7 +101,7 @@ class HomeScreen extends ConsumerWidget {
               const Spacer(),
               // Version number
               Align(
-                alignment: Alignment.centerLeft,
+                alignment: Alignment.centerRight,
                 child: FutureBuilder<PackageInfo>(
                   future: PackageInfo.fromPlatform(),
                   builder: (context, snapshot) {

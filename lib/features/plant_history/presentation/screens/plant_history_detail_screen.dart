@@ -52,6 +52,11 @@ class _DetailView extends ConsumerWidget {
             pinned: true,
             foregroundColor: Colors.white,
             backgroundColor: const Color(0xFF1B5E20),
+            // Título en collapsed: Flutter lo posiciona solo, sin colisión
+            title: Text(
+              displayName,
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
             leading: BackButton(onPressed: () => context.pop()),
             actions: [
               IconButton(
@@ -62,6 +67,7 @@ class _DetailView extends ConsumerWidget {
             ],
             flexibleSpace: FlexibleSpaceBar(
               collapseMode: CollapseMode.parallax,
+              // Título fijo en expanded: siempre left: 16
               background: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -76,28 +82,38 @@ class _DetailView extends ConsumerWidget {
                       ),
                     ),
                   ),
-                ],
-              ),
-              title: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    displayName,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  Positioned(
+                    left: 16,
+                    right: 16,
+                    bottom: 16,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          displayName,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            shadows: [Shadow(blurRadius: 4, color: Colors.black54)],
+                          ),
+                        ),
+                        if (entry.nickname != null)
+                          Text(
+                            plantInfo.commonName,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontStyle: FontStyle.italic,
+                              color: Colors.white70,
+                              shadows: [Shadow(blurRadius: 4, color: Colors.black54)],
+                            ),
+                          ),
+                      ],
                     ),
                   ),
-                  if (entry.nickname != null)
-                    Text(
-                      plantInfo.commonName,
-                      style: const TextStyle(fontSize: 12, color: Colors.white70),
-                    ),
                 ],
               ),
-              titlePadding: const EdgeInsetsDirectional.only(start: 72, bottom: 16),
             ),
           ),
 
