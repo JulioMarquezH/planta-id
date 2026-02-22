@@ -32,31 +32,60 @@ class PlantHistoryDetailScreen extends ConsumerWidget {
   }
 }
 
-class _DetailView extends ConsumerWidget {
+class _DetailView extends ConsumerStatefulWidget {
   final PlantHistoryEntry entry;
 
   const _DetailView({required this.entry});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_DetailView> createState() => _DetailViewState();
+}
+
+class _DetailViewState extends ConsumerState<_DetailView> {
+  final _scrollController = ScrollController();
+  bool _showTitle = false;
+
+  static const _expandedHeight = 300.0;
+  static const _collapseThreshold = _expandedHeight - kToolbarHeight - 10;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      final collapsed = _scrollController.offset > _collapseThreshold;
+      if (collapsed != _showTitle) setState(() => _showTitle = collapsed);
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final plantInfo = entry.plantInfo;
-    final displayName = entry.nickname ?? plantInfo.commonName;
+    final plantInfo = widget.entry.plantInfo;
+    final displayName = widget.entry.nickname ?? plantInfo.commonName;
 
     return Scaffold(
       body: CustomScrollView(
+        controller: _scrollController,
         slivers: [
           // Hero image
           SliverAppBar(
-            expandedHeight: 300,
+            expandedHeight: _expandedHeight,
             pinned: true,
             foregroundColor: Colors.white,
             backgroundColor: const Color(0xFF1B5E20),
-            // Título en collapsed: Flutter lo posiciona solo, sin colisión
-            title: Text(
-              displayName,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
+            // Solo visible cuando la foto ya desapareció
+            title: _showTitle
+                ? Text(
+                    displayName,
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  )
+                : null,
             leading: BackButton(onPressed: () => context.pop()),
             actions: [
               IconButton(
@@ -67,7 +96,6 @@ class _DetailView extends ConsumerWidget {
             ],
             flexibleSpace: FlexibleSpaceBar(
               collapseMode: CollapseMode.parallax,
-              // Título fijo en expanded: siempre left: 16
               background: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -82,10 +110,11 @@ class _DetailView extends ConsumerWidget {
                       ),
                     ),
                   ),
+                  // Título fijo en la foto, sin animación ni colisión
                   Positioned(
                     left: 16,
                     right: 16,
-                    bottom: 16,
+                    bottom: 48,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
@@ -99,7 +128,7 @@ class _DetailView extends ConsumerWidget {
                             shadows: [Shadow(blurRadius: 4, color: Colors.black54)],
                           ),
                         ),
-                        if (entry.nickname != null)
+                        if (widget.entry.nickname != null)
                           Text(
                             plantInfo.commonName,
                             style: const TextStyle(
@@ -221,7 +250,7 @@ class _DetailView extends ConsumerWidget {
   }
 
   Widget _buildImage() {
-    final file = File(entry.imagePath);
+    final file = File(widget.entry.imagePath);
     if (file.existsSync()) {
       return Image.file(file, fit: BoxFit.cover);
     }
@@ -229,7 +258,7 @@ class _DetailView extends ConsumerWidget {
   }
 
   void _showRenameDialog(BuildContext context, WidgetRef ref) {
-    final controller = TextEditingController(text: entry.nickname ?? '');
+    final controller = TextEditingController(text: widget.entry.nickname ?? '');
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -238,7 +267,7 @@ class _DetailView extends ConsumerWidget {
           controller: controller,
           autofocus: true,
           decoration: InputDecoration(
-            hintText: entry.plantInfo.commonName,
+            hintText: widget.entry.plantInfo.commonName,
             labelText: 'Apodo o nombre',
             border: const OutlineInputBorder(),
           ),
@@ -261,7 +290,7 @@ class _DetailView extends ConsumerWidget {
 
   void _saveNickname(BuildContext ctx, WidgetRef ref, String value) {
     Navigator.pop(ctx);
-    ref.read(plantHistoryProvider.notifier).rename(entry.id, value);
+    ref.read(plantHistoryProvider.notifier).rename(widget.entry.id, value);
   }
 }
 

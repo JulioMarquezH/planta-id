@@ -74,7 +74,7 @@ class _PlantResultScreenState extends ConsumerState<PlantResultScreen> {
   }
 }
 
-class _SuccessView extends StatelessWidget {
+class _SuccessView extends StatefulWidget {
   final Uint8List imageBytes;
   final PlantInfo plantInfo;
 
@@ -84,22 +84,50 @@ class _SuccessView extends StatelessWidget {
   });
 
   @override
+  State<_SuccessView> createState() => _SuccessViewState();
+}
+
+class _SuccessViewState extends State<_SuccessView> {
+  final _scrollController = ScrollController();
+  bool _showTitle = false;
+
+  static const _expandedHeight = 300.0;
+  static const _collapseThreshold = _expandedHeight - kToolbarHeight - 10;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      final collapsed = _scrollController.offset > _collapseThreshold;
+      if (collapsed != _showTitle) setState(() => _showTitle = collapsed);
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return CustomScrollView(
+      controller: _scrollController,
       slivers: [
-        // Hero image with plant name overlay
         SliverAppBar(
-          expandedHeight: 300,
+          expandedHeight: _expandedHeight,
           pinned: true,
           foregroundColor: Colors.white,
           backgroundColor: const Color(0xFF1B5E20),
-          // Título en collapsed: Flutter lo posiciona solo, sin colisión
-          title: Text(
-            plantInfo.commonName,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
+          // Solo visible cuando la foto ya desapareció
+          title: _showTitle
+              ? Text(
+                  widget.plantInfo.commonName,
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                )
+              : null,
           leading: BackButton(
             onPressed: () {
               context.go('/');
@@ -107,11 +135,10 @@ class _SuccessView extends StatelessWidget {
           ),
           flexibleSpace: FlexibleSpaceBar(
             collapseMode: CollapseMode.parallax,
-            // Título fijo en expanded: siempre left: 16, sin animación de colisión
             background: Stack(
               fit: StackFit.expand,
               children: [
-                Image.memory(imageBytes, fit: BoxFit.cover),
+                Image.memory(widget.imageBytes, fit: BoxFit.cover),
                 Container(
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
@@ -122,16 +149,17 @@ class _SuccessView extends StatelessWidget {
                     ),
                   ),
                 ),
+                // Título fijo en la foto, sin animación ni colisión
                 Positioned(
                   left: 16,
                   right: 16,
-                  bottom: 16,
+                  bottom: 48,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        plantInfo.commonName,
+                        widget.plantInfo.commonName,
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -140,7 +168,7 @@ class _SuccessView extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        plantInfo.scientificName,
+                        widget.plantInfo.scientificName,
                         style: const TextStyle(
                           fontSize: 13,
                           fontStyle: FontStyle.italic,
@@ -163,7 +191,7 @@ class _SuccessView extends StatelessWidget {
               const SizedBox(height: 8),
 
               // Confidence indicator
-              if (plantInfo.confidence < 0.5)
+              if (widget.plantInfo.confidence < 0.5)
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   padding: const EdgeInsets.all(12),
@@ -193,13 +221,13 @@ class _SuccessView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Chip(
-                      label: Text(plantInfo.family),
+                      label: Text(widget.plantInfo.family),
                       avatar: Icon(Icons.family_restroom,
                           size: 18, color: colorScheme.primary),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      plantInfo.description,
+                      widget.plantInfo.description,
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ],
@@ -213,25 +241,25 @@ class _SuccessView extends StatelessWidget {
                 rows: [
                   PlantInfoRow(
                       label: 'Riego',
-                      value: plantInfo.careInstructions.wateringFrequency),
+                      value: widget.plantInfo.careInstructions.wateringFrequency),
                   PlantInfoRow(
                       label: 'Luz',
-                      value: plantInfo.careInstructions.sunlightNeeds),
+                      value: widget.plantInfo.careInstructions.sunlightNeeds),
                   PlantInfoRow(
                       label: 'Suelo',
-                      value: plantInfo.careInstructions.soilType),
+                      value: widget.plantInfo.careInstructions.soilType),
                   PlantInfoRow(
                       label: 'Temperatura',
-                      value: plantInfo.careInstructions.temperatureRange),
+                      value: widget.plantInfo.careInstructions.temperatureRange),
                   PlantInfoRow(
                       label: 'Humedad',
-                      value: plantInfo.careInstructions.humidity),
+                      value: widget.plantInfo.careInstructions.humidity),
                   PlantInfoRow(
                       label: 'Fertilizante',
-                      value: plantInfo.careInstructions.fertilizerSchedule),
+                      value: widget.plantInfo.careInstructions.fertilizerSchedule),
                   PlantInfoRow(
                       label: 'Poda',
-                      value: plantInfo.careInstructions.pruningTips),
+                      value: widget.plantInfo.careInstructions.pruningTips),
                 ],
               ),
 
@@ -242,26 +270,26 @@ class _SuccessView extends StatelessWidget {
                 rows: [
                   PlantInfoRow(
                       label: 'Origen',
-                      value: plantInfo.climateInfo.nativeRegion),
+                      value: widget.plantInfo.climateInfo.nativeRegion),
                   PlantInfoRow(
                       label: 'Zonas USDA',
-                      value: plantInfo.climateInfo.hardinessZones),
+                      value: widget.plantInfo.climateInfo.hardinessZones),
                   PlantInfoRow(
                       label: 'Clima ideal',
-                      value: plantInfo.climateInfo.climatePreference),
+                      value: widget.plantInfo.climateInfo.climatePreference),
                   PlantInfoRow(
                       label: 'Ubicaci\u00f3n',
-                      value: plantInfo.climateInfo.indoorOutdoor),
+                      value: widget.plantInfo.climateInfo.indoorOutdoor),
                 ],
               ),
 
               // Pests and diseases
-              if (plantInfo.pestsAndDiseases.isNotEmpty)
-                _PestsCard(pests: plantInfo.pestsAndDiseases),
+              if (widget.plantInfo.pestsAndDiseases.isNotEmpty)
+                _PestsCard(pests: widget.plantInfo.pestsAndDiseases),
 
               // Fun facts
-              if (plantInfo.funFacts.isNotEmpty)
-                _FunFactsCard(facts: plantInfo.funFacts),
+              if (widget.plantInfo.funFacts.isNotEmpty)
+                _FunFactsCard(facts: widget.plantInfo.funFacts),
 
               // Identify another button
               Padding(
