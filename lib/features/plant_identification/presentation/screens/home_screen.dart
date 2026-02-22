@@ -47,7 +47,7 @@ class HomeScreen extends ConsumerWidget {
               const SizedBox(height: 24),
               // App name
               Text(
-                'PlantID',
+                'Plantify',
                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: colorScheme.primary,

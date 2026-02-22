@@ -1,7 +1,7 @@
 name: plant_id
 description: "Plant identification app using AI vision"
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.1+2
 
 environment:
   sdk: ^3.5.3
@@ -37,6 +37,7 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.14.3
 
   # Code generation
   build_runner: ^2.4.0
@@ -44,7 +45,16 @@ dev_dependencies:
   json_serializable: ^6.8.0
   riverpod_generator: ^2.6.2
 
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#27AE60"
+  adaptive_icon_foreground: "assets/icon.png"
+
 flutter:
   uses-material-design: true
   assets:
     - .env
+    - assets/
