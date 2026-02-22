@@ -31,18 +31,18 @@ class HomeScreen extends ConsumerWidget {
           child: Column(
             children: [
               const Spacer(flex: 2),
-              // App icon
+              // App icon — mismo esquema del lanzador: verde oscuro + hoja blanca
               Container(
                 width: 120,
                 height: 120,
-                decoration: BoxDecoration(
-                  color: colorScheme.primaryContainer,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF2E7D32),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.eco,
                   size: 60,
-                  color: colorScheme.primary,
+                  color: Colors.white,
                 ),
               ),
               const SizedBox(height: 24),
