@@ -10,11 +10,12 @@ part 'plant_history_provider.g.dart';
 
 @riverpod
 class PlantHistory extends _$PlantHistory {
-  late final PlantHistoryRepository _repository;
+  // Instanciado directamente para evitar LateInitializationError
+  // cuando Riverpod llama build() más de una vez en el mismo notifier
+  final _repository = PlantHistoryRepository();
 
   @override
   Future<List<PlantHistoryEntry>> build() async {
-    _repository = PlantHistoryRepository();
     return _repository.getAll();
   }
 

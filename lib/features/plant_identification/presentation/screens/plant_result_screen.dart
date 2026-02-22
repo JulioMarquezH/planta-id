@@ -93,12 +93,14 @@ class _SuccessView extends StatelessWidget {
         SliverAppBar(
           expandedHeight: 300,
           pinned: true,
+          foregroundColor: Colors.white,
           leading: BackButton(
             onPressed: () {
               context.go('/');
             },
           ),
           flexibleSpace: FlexibleSpaceBar(
+            collapseMode: CollapseMode.parallax,
             background: Stack(
               fit: StackFit.expand,
               children: [
@@ -109,6 +111,7 @@ class _SuccessView extends StatelessWidget {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [Colors.transparent, Colors.black87],
+                      stops: [0.4, 1.0],
                     ),
                   ),
                 ),
@@ -123,6 +126,7 @@ class _SuccessView extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
                 Text(

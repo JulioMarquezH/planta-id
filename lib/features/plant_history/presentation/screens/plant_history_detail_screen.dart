@@ -50,6 +50,7 @@ class _DetailView extends ConsumerWidget {
           SliverAppBar(
             expandedHeight: 300,
             pinned: true,
+            foregroundColor: Colors.white,
             leading: BackButton(onPressed: () => context.pop()),
             actions: [
               IconButton(
@@ -59,6 +60,7 @@ class _DetailView extends ConsumerWidget {
               ),
             ],
             flexibleSpace: FlexibleSpaceBar(
+              collapseMode: CollapseMode.parallax,
               background: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -69,6 +71,7 @@ class _DetailView extends ConsumerWidget {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [Colors.transparent, Colors.black87],
+                        stops: [0.4, 1.0],
                       ),
                     ),
                   ),
@@ -80,7 +83,11 @@ class _DetailView extends ConsumerWidget {
                 children: [
                   Text(
                     displayName,
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                   if (entry.nickname != null)
                     Text(
