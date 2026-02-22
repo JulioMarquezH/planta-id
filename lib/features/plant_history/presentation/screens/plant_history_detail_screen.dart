@@ -268,6 +268,7 @@ class _DetailViewState extends ConsumerState<_DetailView> {
           autofocus: true,
           decoration: InputDecoration(
             hintText: widget.entry.plantInfo.commonName,
+            hintStyle: const TextStyle(color: Colors.black26),
             labelText: 'Apodo o nombre',
             border: const OutlineInputBorder(),
           ),
