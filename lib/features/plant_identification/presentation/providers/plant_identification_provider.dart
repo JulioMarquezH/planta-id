@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../plant_history/presentation/providers/plant_history_provider.dart';
 import '../../data/claude_api_service.dart';
 import '../../data/image_service.dart';
 import '../../domain/identification_state.dart';
@@ -38,6 +39,13 @@ class PlantIdentification extends _$PlantIdentification {
         base64Image: base64,
         mediaType: picked.mediaType,
       );
+
+      // Auto-guardar en historial
+      await ref.read(plantHistoryProvider.notifier).addEntry(
+            imageBytes: picked.bytes,
+            plantInfo: plantInfo,
+          );
+
       state = IdentificationState.success(picked.bytes, plantInfo);
     } on PlantIdentificationException catch (e) {
       state = IdentificationState.error(picked.bytes, e.message);
@@ -57,16 +65,20 @@ class PlantIdentification extends _$PlantIdentification {
     final currentState = state;
     switch (currentState) {
       case IdentificationError(:final imageBytes):
-        // Re-pick not possible, so we need to store the picked image data
-        // For retry, we re-send the same bytes
         state = IdentificationState.loading(imageBytes);
         try {
           final base64 = _imageService.encodeToBase64(imageBytes);
-          // Default to jpeg for retry since we lost the original media type
           final plantInfo = await _apiService.identifyPlant(
             base64Image: base64,
             mediaType: 'image/jpeg',
           );
+
+          // Auto-guardar en historial también en retry
+          await ref.read(plantHistoryProvider.notifier).addEntry(
+                imageBytes: imageBytes,
+                plantInfo: plantInfo,
+              );
+
           state = IdentificationState.success(imageBytes, plantInfo);
         } on PlantIdentificationException catch (e) {
           state = IdentificationState.error(imageBytes, e.message);

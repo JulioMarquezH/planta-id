@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../data/image_service.dart';
 import '../../domain/identification_state.dart';
@@ -30,19 +31,11 @@ class HomeScreen extends ConsumerWidget {
           child: Column(
             children: [
               const Spacer(flex: 2),
-              // App icon
-              Container(
+              // App icon — igual que el ícono lanzador
+              Image.asset(
+                'assets/icon.png',
                 width: 120,
                 height: 120,
-                decoration: BoxDecoration(
-                  color: colorScheme.primaryContainer,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.eco,
-                  size: 60,
-                  color: colorScheme.primary,
-                ),
               ),
               const SizedBox(height: 24),
               // App name
@@ -98,6 +91,26 @@ class HomeScreen extends ConsumerWidget {
                 ),
               ),
               const Spacer(),
+              // Version number
+              Align(
+                alignment: Alignment.centerRight,
+                child: FutureBuilder<PackageInfo>(
+                  future: PackageInfo.fromPlatform(),
+                  builder: (context, snapshot) {
+                    final version = snapshot.data?.version ?? '';
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Text(
+                        'v$version',
+                        style: const TextStyle(
+                          fontSize: 10,
+                          color: Colors.black38,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         ),

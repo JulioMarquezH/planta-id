@@ -7,7 +7,7 @@ part of 'plant_identification_provider.dart';
 // **************************************************************************
 
 String _$plantIdentificationHash() =>
-    r'97040fdd146fcce83eddc10f100770d493c04193';
+    r'fb79eb1084d8cbb00786e1a490139c01ef09a9ea';
 
 /// See also [PlantIdentification].
 @ProviderFor(PlantIdentification)

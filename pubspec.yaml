@@ -1,7 +1,7 @@
 name: plant_id
 description: "Plant identification app using AI vision"
 publish_to: 'none'
-version: 1.0.1+2
+version: 1.0.7+8
 
 environment:
   sdk: ^3.5.3
@@ -31,6 +31,14 @@ dependencies:
 
   # Environment variables
   flutter_dotenv: ^5.2.0
+
+  # Local storage & history
+  shared_preferences: ^2.3.0
+  path_provider: ^2.1.0
+  uuid: ^4.5.0
+
+  # App info
+  package_info_plus: ^8.0.0
 
 dev_dependencies:
   flutter_test:
