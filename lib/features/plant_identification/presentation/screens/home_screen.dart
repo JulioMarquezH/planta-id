@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../data/image_service.dart';
 import '../../domain/identification_state.dart';
@@ -98,6 +99,26 @@ class HomeScreen extends ConsumerWidget {
                 ),
               ),
               const Spacer(),
+              // Version number
+              Align(
+                alignment: Alignment.centerLeft,
+                child: FutureBuilder<PackageInfo>(
+                  future: PackageInfo.fromPlatform(),
+                  builder: (context, snapshot) {
+                    final version = snapshot.data?.version ?? '';
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Text(
+                        'v$version',
+                        style: const TextStyle(
+                          fontSize: 10,
+                          color: Colors.black38,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         ),

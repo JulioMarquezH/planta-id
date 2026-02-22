@@ -51,6 +51,7 @@ class _DetailView extends ConsumerWidget {
             expandedHeight: 300,
             pinned: true,
             foregroundColor: Colors.white,
+            backgroundColor: const Color(0xFF1B5E20),
             leading: BackButton(onPressed: () => context.pop()),
             actions: [
               IconButton(
@@ -96,7 +97,7 @@ class _DetailView extends ConsumerWidget {
                     ),
                 ],
               ),
-              titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
+              titlePadding: const EdgeInsetsDirectional.only(start: 72, bottom: 16),
             ),
           ),
 
