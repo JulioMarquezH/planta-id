@@ -6,14 +6,34 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../data/image_service.dart';
 import '../../domain/identification_state.dart';
 import '../providers/plant_identification_provider.dart';
+import '../../../usage/presentation/providers/usage_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
+
+  Future<void> _handleIdentify(
+    BuildContext context,
+    WidgetRef ref,
+    bool fromCamera,
+  ) async {
+    final canIdentify = await ref.read(usageNotifierProvider.notifier).canIdentify();
+    if (!context.mounted) return;
+    if (!canIdentify) {
+      context.push('/paywall');
+      return;
+    }
+    if (fromCamera) {
+      ref.read(plantIdentificationProvider.notifier).identifyFromCamera();
+    } else {
+      ref.read(plantIdentificationProvider.notifier).identifyFromGallery();
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
     final cameraSupported = ImageService().cameraSupported;
+    final usageAsync = ref.watch(usageNotifierProvider);
 
     ref.listen<IdentificationState>(
       plantIdentificationProvider,
@@ -31,7 +51,7 @@ class HomeScreen extends ConsumerWidget {
           child: Column(
             children: [
               const Spacer(flex: 2),
-              // App icon — mismo esquema del lanzador: verde oscuro + hoja blanca
+              // App icon
               Container(
                 width: 120,
                 height: 120,
@@ -67,11 +87,7 @@ class HomeScreen extends ConsumerWidget {
               SizedBox(
                 width: double.infinity,
                 child: FilledButton.icon(
-                  onPressed: () {
-                    ref
-                        .read(plantIdentificationProvider.notifier)
-                        .identifyFromCamera();
-                  },
+                  onPressed: () => _handleIdentify(context, ref, true),
                   icon: Icon(cameraSupported ? Icons.camera_alt : Icons.photo_library),
                   label: Text(cameraSupported ? 'Tomar Foto' : 'Elegir Foto'),
                   style: FilledButton.styleFrom(
@@ -85,11 +101,7 @@ class HomeScreen extends ConsumerWidget {
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
-                  onPressed: () {
-                    ref
-                        .read(plantIdentificationProvider.notifier)
-                        .identifyFromGallery();
-                  },
+                  onPressed: () => _handleIdentify(context, ref, false),
                   icon: const Icon(Icons.photo_library),
                   label: const Text('Elegir de Galería'),
                   style: OutlinedButton.styleFrom(
@@ -97,6 +109,35 @@ class HomeScreen extends ConsumerWidget {
                     textStyle: const TextStyle(fontSize: 16),
                   ),
                 ),
+              ),
+              const SizedBox(height: 16),
+              // Indicador de usos restantes
+              usageAsync.when(
+                data: (remaining) {
+                  final isEmpty = remaining == 0;
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        isEmpty ? Icons.lock_outline : Icons.eco_outlined,
+                        size: 14,
+                        color: isEmpty ? Colors.red.shade300 : Colors.green.shade600,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        isEmpty
+                            ? 'Límite diario alcanzado'
+                            : '$remaining de 3 identificaciones restantes hoy',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isEmpty ? Colors.red.shade300 : Colors.black38,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+                loading: () => const SizedBox(height: 18),
+                error: (_, __) => const SizedBox(height: 18),
               ),
               const Spacer(),
               // Version number
