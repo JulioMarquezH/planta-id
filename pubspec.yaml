@@ -1,7 +1,7 @@
 name: plant_id
 description: "Plant identification app using AI vision"
 publish_to: 'none'
-version: 1.1.1+12
+version: 1.1.2+13
 
 environment:
   sdk: ^3.5.3
