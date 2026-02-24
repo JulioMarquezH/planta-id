@@ -5,6 +5,7 @@ import 'features/plant_history/presentation/screens/my_plants_screen.dart';
 import 'features/plant_history/presentation/screens/plant_history_detail_screen.dart';
 import 'features/plant_identification/presentation/screens/home_screen.dart';
 import 'features/plant_identification/presentation/screens/plant_result_screen.dart';
+import 'features/usage/presentation/screens/paywall_screen.dart';
 
 final goRouter = GoRouter(
   initialLocation: '/',
@@ -22,6 +23,10 @@ final goRouter = GoRouter(
               builder: (context, state) => const PlantResultScreen(),
             ),
           ],
+        ),
+        GoRoute(
+          path: '/paywall',
+          builder: (context, state) => const PaywallScreen(),
         ),
         GoRoute(
           path: '/my-plants',
@@ -54,7 +59,7 @@ class _AppShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Ocultar bottom nav en la pantalla de resultado
-    final showNav = !location.startsWith('/result');
+    final showNav = !location.startsWith('/result') && !location.startsWith('/paywall');
 
     return Scaffold(
       body: child,
