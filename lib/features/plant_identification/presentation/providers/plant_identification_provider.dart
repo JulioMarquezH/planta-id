@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../plant_history/presentation/providers/plant_history_provider.dart';
+import '../../../usage/presentation/providers/usage_provider.dart';
 import '../../data/claude_api_service.dart';
 import '../../data/image_service.dart';
 import '../../domain/identification_state.dart';
@@ -45,6 +46,9 @@ class PlantIdentification extends _$PlantIdentification {
             imageBytes: picked.bytes,
             plantInfo: plantInfo,
           );
+
+      // Consumir un uso del límite diario
+      await ref.read(usageNotifierProvider.notifier).consume();
 
       state = IdentificationState.success(picked.bytes, plantInfo);
     } on PlantIdentificationException catch (e) {

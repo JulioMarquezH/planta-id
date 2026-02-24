@@ -6,7 +6,7 @@ part of 'plant_history_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$plantHistoryHash() => r'b400153cdde50be9681e0a81e450202913912bbf';
+String _$plantHistoryHash() => r'5e73bc91b11225251021b224e83542e094dc9f72';
 
 /// See also [PlantHistory].
 @ProviderFor(PlantHistory)
